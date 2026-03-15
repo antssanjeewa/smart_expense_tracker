@@ -25,8 +25,6 @@ dependencies:
   hive_flutter: ^1.1.0
   get_it: ^9.2.1
   flutter_secure_storage: ^9.0.0
-  flutter_native_splash: ^2.4.7
-  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -34,6 +32,8 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.12.2
   freezed: ^3.2.3
+  flutter_native_splash: ^2.4.7
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -53,3 +53,18 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icons/logo.png"
+  adaptive_icon_background: "#f0f0ff"
+  adaptive_icon_foreground: "assets/icons/logo.png"
+
+flutter_native_splash:
+  color: "#F7F9FC"
+  image: assets/icons/logo.png
+
+  android_12:
+    image: assets/icons/logo.png
+    color: "#F7F9FC"
