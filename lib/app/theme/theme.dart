@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:smart_expense_tracker/app/theme/app_input_decoration_theme.dart';
 
+import '../../core/constants/app_colors.dart';
 import 'app_text_theme.dart';
 
 final themeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
@@ -16,17 +18,26 @@ ThemeData lightTheme() {
 ThemeData darkTheme() {
   return ThemeData(
     useMaterial3: true,
-
     brightness: Brightness.dark,
-
     colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFF2BB673),
+      seedColor: AppColors.secondary,
       brightness: Brightness.dark,
     ),
 
-    scaffoldBackgroundColor: const Color(0xFF121212),
+    scaffoldBackgroundColor: AppColors.background,
     textTheme: AppTextTheme.getDarkTextTheme(),
 
     appBarTheme: const AppBarTheme(elevation: 0, centerTitle: true),
+
+    inputDecorationTheme: AppInputDecorationTheme.darkInputDecorationTheme,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+        textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+    ),
   );
 }

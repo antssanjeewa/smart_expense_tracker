@@ -8,7 +8,7 @@ class NotFoundScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF101722), // Your background-dark
+      backgroundColor: const Color(0xFF101722),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
