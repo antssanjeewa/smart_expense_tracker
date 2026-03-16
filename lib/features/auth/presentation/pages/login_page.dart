@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/pages.dart';
 import '../../../../core/constants/constants.dart';
+import '../../../../core/utils/app_validation.dart';
 import '../../../../core/utils/snackbar_utils.dart';
 import '../providers/auth_providers.dart';
 import '../providers/auth_state.dart';
@@ -24,7 +25,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
+    final password = _passwordController.text;
 
     await ref.read(authControllerProvider.notifier).login(email, password);
   }
@@ -97,6 +98,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             SizedBox(height: 8),
                             TextFormField(
                               controller: _emailController,
+                              validator: AppValidation.validateEmail,
                               decoration: const InputDecoration(
                                 prefixIcon: Icon(Icons.email_outlined),
                                 hintText: 'test@example.com',
@@ -112,6 +114,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             TextFormField(
                               controller: _passwordController,
                               obscureText: !_isPasswordVisible,
+                              validator: AppValidation.validatePassword,
                               decoration: InputDecoration(
                                 hintText: "••••••••",
                                 prefixIcon: Icon(Icons.lock_outline),
@@ -160,7 +163,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           ),
                           const SizedBox(height: 24),
                           IconButton(
-                            onPressed: _handleBiometricLogin,
+                            onPressed: state is AuthLoading
+                                ? null
+                                : _handleBiometricLogin,
                             icon: const Icon(
                               Icons.fingerprint,
                               color: AppColors.primary,

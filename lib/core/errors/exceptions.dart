@@ -14,7 +14,9 @@ class AppException implements Exception {
   factory AppException.fromError(dynamic error) {
     // 2. Handle Database/Postgrest Errors
     if (error is PostgrestException) {
-      return AppException('Database error: ${error.message}');
+      return AppException(
+        'Something went wrong while processing your request. Please try again.',
+      );
     }
 
     // 3. Handle Connectivity Errors

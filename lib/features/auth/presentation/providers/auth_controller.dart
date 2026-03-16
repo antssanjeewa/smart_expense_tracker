@@ -30,13 +30,13 @@ class AuthController extends StateNotifier<AuthState> {
   Future<void> loginWithBiometrics() async {
     state = const AuthLoading();
 
-    final canAuth = await _biometricAuth.canCheckBiometrics();
-    if (!canAuth) {
-      state = const AuthError('Biometric authentication not available');
-      return;
-    }
-
     try {
+      final canAuth = await _biometricAuth.canCheckBiometrics();
+      if (!canAuth) {
+        state = const AuthError('Biometric authentication not available');
+        return;
+      }
+
       final success = await _biometricAuth.authenticate();
       if (success) {
         state = const AuthSuccess("biometric_user_id");

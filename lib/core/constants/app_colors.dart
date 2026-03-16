@@ -11,6 +11,6 @@ class AppColors {
   static const Color onPrimary = Color(0xFFFFFFFF);
   static const Color onSecondary = Color(0xFF64748b);
   static const Color onError = Color(0xFFFFFFFF);
-  static const Color onBackground = Color(0x89FFFFFF);
+  static const Color onBackground = Color(0xBAFFFFFF);
   static const Color onSurface = Colors.grey;
 }
