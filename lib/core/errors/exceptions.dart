@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 class AppException implements Exception {
   final String message;
   final String? code;
@@ -7,17 +10,23 @@ class AppException implements Exception {
   @override
   String toString() =>
       'AppException: $message${code != null ? ' (Code: $code)' : ''}';
-}
 
-class NetworkException extends AppException {
-  NetworkException(String message) : super(message, code: 'NETWORK_ERROR');
-}
+  factory AppException.fromError(dynamic error) {
+    // 2. Handle Database/Postgrest Errors
+    if (error is PostgrestException) {
+      return AppException('Database error: ${error.message}');
+    }
 
-class AuthenticationException extends AppException {
-  AuthenticationException(String message) : super(message, code: 'AUTH_ERROR');
-}
+    // 3. Handle Connectivity Errors
+    if (error is SocketException) {
+      return AppException('No internet connection. Please check your network.');
+    }
 
-class ValidationException extends AppException {
-  ValidationException(String message)
-    : super(message, code: 'VALIDATION_ERROR');
+    if (error.toString().contains('timeout')) {
+      return AppException('The server took too long to respond.');
+    }
+
+    // 4. Default Fallback
+    return AppException('An unexpected error occurred. Please try again.');
+  }
 }

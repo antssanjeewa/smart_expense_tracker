@@ -19,13 +19,10 @@ class AppTextTheme {
         fontSize: 14,
         fontWeight: FontWeight.bold,
         color: Colors.white,
+        letterSpacing: 1,
       ),
 
-      bodyLarge: TextStyle(
-        fontSize: 16,
-        color: AppColors.onSurface,
-        letterSpacing: 0.5,
-      ),
+      bodyLarge: TextStyle(fontSize: 16, letterSpacing: 1),
       bodyMedium: TextStyle(
         fontSize: 14,
         color: AppColors.onSurface,

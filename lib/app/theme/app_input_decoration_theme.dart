@@ -5,6 +5,7 @@ class AppInputDecorationTheme {
   static InputDecorationTheme get darkInputDecorationTheme {
     return InputDecorationTheme(
       floatingLabelBehavior: FloatingLabelBehavior.never,
+      hintStyle: TextStyle(color: AppColors.onSurface.withAlpha(100)),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide.none,

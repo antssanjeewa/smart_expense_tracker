@@ -1,18 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/pages.dart';
 import '../../../../core/constants/constants.dart';
+import '../../../../core/utils/snackbar_utils.dart';
+import '../providers/auth_providers.dart';
+import '../providers/auth_state.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
+  bool _isPasswordVisible = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  void _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    await ref.read(authControllerProvider.notifier).login(email, password);
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    ref.listen<AuthState>(authControllerProvider, (previous, next) {
+      if (next is AuthSuccess) {
+        Pages.home.go(context);
+      }
+      if (next is AuthError) {
+        context.showError(next.message);
+      }
+    });
+
+    final state = ref.watch(authControllerProvider);
+
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
@@ -44,8 +80,9 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 24),
                       Form(
+                        key: _formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -55,6 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             SizedBox(height: 8),
                             TextFormField(
+                              controller: _emailController,
                               decoration: const InputDecoration(
                                 prefixIcon: Icon(Icons.email_outlined),
                                 hintText: 'test@example.com',
@@ -68,13 +106,22 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             SizedBox(height: 8),
                             TextFormField(
-                              obscureText: true,
+                              controller: _passwordController,
+                              obscureText: !_isPasswordVisible,
                               decoration: InputDecoration(
                                 hintText: "••••••••",
                                 prefixIcon: Icon(Icons.lock_outline),
                                 suffixIcon: IconButton(
-                                  icon: Icon(Icons.visibility_outlined),
-                                  onPressed: () {},
+                                  icon: Icon(
+                                    _isPasswordVisible
+                                        ? Icons.visibility_off_outlined
+                                        : Icons.visibility_outlined,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isPasswordVisible = !_isPasswordVisible;
+                                    });
+                                  },
                                 ),
                               ),
                             ),
@@ -83,16 +130,24 @@ class _LoginPageState extends State<LoginPage> {
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
-                                onPressed: () {
-                                  Pages.home.go(context);
-                                },
-                                child: const Text('Login'),
+                                onPressed: state is AuthLoading
+                                    ? null
+                                    : _handleLogin,
+                                child: state is AuthLoading
+                                    ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Text('Login'),
                               ),
                             ),
                           ],
                         ),
                       ),
-
+                      const SizedBox(height: 24),
                       Column(
                         children: [
                           Text(
