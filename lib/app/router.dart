@@ -20,7 +20,7 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const LoginPage(),
     ),
     // GoRoute(
-    //   path: '/add',
+    //   path: Pages.home.toPath(),
     //   // builder: (context, state) => AddTransactionPage(),
     // ),
   ],
