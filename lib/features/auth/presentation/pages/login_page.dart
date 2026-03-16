@@ -29,6 +29,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     await ref.read(authControllerProvider.notifier).login(email, password);
   }
 
+  void _handleBiometricLogin() async {
+    await ref.read(authControllerProvider.notifier).loginWithBiometrics();
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -156,10 +160,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           ),
                           const SizedBox(height: 24),
                           IconButton(
-                            onPressed: () {
-                              // Implement biometric login logic here
-                            },
-                            // onPressed: _handleBiometricLogin,
+                            onPressed: _handleBiometricLogin,
                             icon: const Icon(
                               Icons.fingerprint,
                               color: AppColors.primary,

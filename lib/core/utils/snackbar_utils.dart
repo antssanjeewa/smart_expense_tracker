@@ -32,7 +32,10 @@ extension SnackBarExtension on BuildContext {
       builder: (context) => CupertinoAlertDialog(
         title: const Text(
           "Error",
-          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.error),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.redAccent,
+          ),
         ),
         content: Padding(
           padding: const EdgeInsets.only(top: 8.0),
