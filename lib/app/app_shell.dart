@@ -13,6 +13,13 @@ class AppShell extends StatelessWidget {
     return Scaffold(
       extendBody: false,
       body: child,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Pages.more.go(context),
+        backgroundColor: AppColors.primary,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
@@ -37,10 +44,11 @@ class AppShell extends StatelessWidget {
             label: 'HOME',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet_outlined),
-            activeIcon: Icon(Icons.account_balance_wallet),
-            label: 'WALLET',
+            icon: Icon(Icons.history_outlined),
+            activeIcon: Icon(Icons.history),
+            label: 'HISTORY',
           ),
+          BottomNavigationBarItem(icon: SizedBox.shrink(), label: ''),
           BottomNavigationBarItem(
             icon: Icon(Icons.show_chart),
             activeIcon: Icon(Icons.show_chart),
@@ -59,12 +67,9 @@ class AppShell extends StatelessWidget {
   static int _calculateSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
     if (location.startsWith(Pages.home.toPath())) return 0;
-    // if (location.startsWith(Pages.portfolio.toPath())) return 1;
-    // if (location.startsWith(Pages.watchlist.toPath())) return 2;
-    // if (location.startsWith(Pages.profile.toPath()) ||
-    //     location.startsWith(Pages.settings.toPath())) {
-    //   return 3;
-    // }
+    if (location.startsWith(Pages.history.toPath())) return 1;
+    if (location.startsWith(Pages.stats.toPath())) return 3;
+    if (location.startsWith(Pages.more.toPath())) return 4;
     return 0;
   }
 
@@ -73,15 +78,15 @@ class AppShell extends StatelessWidget {
       case 0:
         Pages.home.go(context);
         break;
-      // case 1:
-      //   Pages.portfolio.go(context);
-      //   break;
-      // case 2:
-      //   Pages.watchlist.go(context);
-      //   break;
-      // case 3:
-      //   Pages.settings.go(context);
-      //   break;
+      case 1:
+        Pages.history.go(context);
+        break;
+      case 3:
+        Pages.stats.go(context);
+        break;
+      case 4:
+        Pages.more.go(context);
+        break;
     }
   }
 }

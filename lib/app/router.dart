@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../features/history/presentation/pages/history_page.dart';
+import '../features/more/presentation/pages/more_page.dart';
+import '../features/stats/presentation/pages/stats_page.dart';
 import 'app_shell.dart';
 import 'pages.dart';
 
@@ -28,6 +31,21 @@ final GoRouter router = GoRouter(
           path: Pages.home.toPath(),
           name: Pages.home.toPathName(),
           builder: (context, state) => HomePage(),
+        ),
+        GoRoute(
+          path: Pages.history.toPath(),
+          name: Pages.history.toPathName(),
+          builder: (context, state) => const HistoryPage(),
+        ),
+        GoRoute(
+          path: Pages.stats.toPath(),
+          name: Pages.stats.toPathName(),
+          builder: (context, state) => const StatsPage(),
+        ),
+        GoRoute(
+          path: Pages.more.toPath(),
+          name: Pages.more.toPathName(),
+          builder: (context, state) => const MorePage(),
         ),
       ],
     ),
