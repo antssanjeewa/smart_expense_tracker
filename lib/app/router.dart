@@ -1,18 +1,37 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'pages.dart';
 
-final router = GoRouter(
+import '../features/not_found_page.dart';
+import '../features/auth/presentation/pages/login_page.dart';
+import '../features/splash/presentation/splash_page.dart';
+
+final GoRouter router = GoRouter(
+  initialLocation: Pages.splash.toPath(),
   routes: [
     GoRoute(
-      path: '/',
-      // builder: (context, state) => DashboardPage(),
+      path: Pages.splash.toPath(),
+      name: Pages.splash.toPathName(),
+      builder: (context, state) => SplashPage(),
     ),
     GoRoute(
-      path: '/transactions',
-      // builder: (context, state) => TransactionsPage(),
+      path: Pages.login.toPath(),
+      name: Pages.login.toPathName(),
+      builder: (context, state) => const LoginPage(),
     ),
-    GoRoute(
-      path: '/add',
-      // builder: (context, state) => AddTransactionPage(),
-    ),
+    // GoRoute(
+    //   path: '/add',
+    //   // builder: (context, state) => AddTransactionPage(),
+    // ),
   ],
+  errorPageBuilder: (context, state) {
+    return CustomTransitionPage(
+      key: state.pageKey,
+      child: NotFoundScreen(error: state.error),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        // Use a FadeTransition or SlideTransition here
+        return FadeTransition(opacity: animation, child: child);
+      },
+    );
+  },
 );
