@@ -27,7 +27,11 @@ ThemeData darkTheme() {
     scaffoldBackgroundColor: AppColors.background,
     textTheme: AppTextTheme.getDarkTextTheme(),
 
-    appBarTheme: const AppBarTheme(elevation: 0, centerTitle: true),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.surface,
+      elevation: 0,
+      iconTheme: IconThemeData(color: Colors.white),
+    ),
 
     inputDecorationTheme: AppInputDecorationTheme.darkInputDecorationTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(

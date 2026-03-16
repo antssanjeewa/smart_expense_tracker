@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'app_shell.dart';
 import 'pages.dart';
 
 import '../features/not_found_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/splash/presentation/splash_page.dart';
-import '../features/dashboard/presentation/home_page.dart';
+import '../features/dashboard/presentation/pages/home_page.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: Pages.splash.toPath(),
@@ -20,10 +21,15 @@ final GoRouter router = GoRouter(
       name: Pages.login.toPathName(),
       builder: (context, state) => const LoginPage(),
     ),
-    GoRoute(
-      path: Pages.home.toPath(),
-      name: Pages.home.toPathName(),
-      builder: (context, state) => HomePage(),
+    ShellRoute(
+      builder: (context, state, child) => AppShell(child: child),
+      routes: [
+        GoRoute(
+          path: Pages.home.toPath(),
+          name: Pages.home.toPathName(),
+          builder: (context, state) => HomePage(),
+        ),
+      ],
     ),
   ],
 
