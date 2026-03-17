@@ -1,12 +1,22 @@
 import 'package:logger/logger.dart';
 
 class LoggerService {
-  static final Logger _logger = Logger(printer: PrettyPrinter());
+  final Logger _logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 2,
+      errorMethodCount: 8,
+      lineLength: 120,
+      colors: true,
+      printEmojis: true,
+    ),
+  );
 
-  static void t(dynamic message) => _logger.t(message);
-  static void d(dynamic message) => _logger.d(message);
-  static void i(dynamic message) => _logger.i(message);
-  static void w(dynamic message) => _logger.w(message);
-  static void e(dynamic message) => _logger.e(message);
-  static void f(dynamic message) => _logger.f(message);
+  void t(dynamic msg) => _logger.t(msg);
+  void d(dynamic msg) => _logger.d(msg);
+  void i(dynamic msg) => _logger.i(msg);
+  void w(dynamic msg) => _logger.w(msg);
+
+  void e(dynamic msg, [dynamic error, StackTrace? stackTrace]) {
+    _logger.e(msg, error: error, stackTrace: stackTrace);
+  }
 }

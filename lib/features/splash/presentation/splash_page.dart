@@ -1,29 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../app/pages.dart';
 import '../../../core/constants/constants.dart';
-import '../../auth/domain/provider.dart';
 
 class SplashPage extends ConsumerWidget {
   const SplashPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<AsyncValue<String?>>(authStateProvider, (previous, next) {
-      next.whenData((userId) {
-        Future.delayed(const Duration(seconds: 3), () {
-          if (!context.mounted) return;
-
-          if (userId != null) {
-            Pages.home.go(context);
-          } else {
-            Pages.login.go(context);
-          }
-        });
-      });
-    });
-
     return Scaffold(
       body: Stack(
         children: [

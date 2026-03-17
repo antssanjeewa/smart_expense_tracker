@@ -27,6 +27,16 @@ class AuthController extends AsyncNotifier<String?> {
       return userId;
     });
   }
+
+  Future<void> logout() async {
+    state = const AsyncLoading();
+    final logoutUseCase = ref.read(logoutUseCaseProvider);
+
+    state = await AsyncValue.guard(() async {
+      await logoutUseCase();
+      return null;
+    });
+  }
 }
 
 class PasswordVisibility extends Notifier<bool> {

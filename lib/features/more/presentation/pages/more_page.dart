@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/constants.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 
 class MorePage extends ConsumerWidget {
   const MorePage({super.key});
@@ -102,7 +103,11 @@ class MorePage extends ConsumerWidget {
                       icon: Icons.logout,
                       title: "Logout",
                       isDestructive: true,
-                      onTap: () {},
+                      onTap: () async {
+                        await ref
+                            .read(authControllerProvider.notifier)
+                            .logout();
+                      },
                     ),
                   ]),
 
@@ -111,7 +116,7 @@ class MorePage extends ConsumerWidget {
                     "Smart Expense Tracker v2.4.0",
                     style: TextStyle(color: Colors.grey, fontSize: 12),
                   ),
-                  const SizedBox(height: 100), // Bottom nav එකට ඉඩ තැබීමට
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
