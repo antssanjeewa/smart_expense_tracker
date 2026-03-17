@@ -10,8 +10,8 @@ final themeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 ThemeData lightTheme() {
   return ThemeData(
     useMaterial3: true,
-    primaryColor: Color(0xFF2BB673),
-    scaffoldBackgroundColor: Color(0xFFF7F9FC),
+    primaryColor: const Color(0xFF2BB673),
+    scaffoldBackgroundColor: const Color(0xFFF7F9FC),
   );
 }
 
@@ -27,7 +27,11 @@ ThemeData darkTheme() {
     scaffoldBackgroundColor: AppColors.background,
     textTheme: AppTextTheme.getDarkTextTheme(),
 
-    appBarTheme: const AppBarTheme(elevation: 0, centerTitle: true),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.surface,
+      elevation: 0,
+      iconTheme: IconThemeData(color: Colors.white),
+    ),
 
     inputDecorationTheme: AppInputDecorationTheme.darkInputDecorationTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(

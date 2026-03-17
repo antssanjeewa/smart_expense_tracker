@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../features/history/presentation/pages/history_page.dart';
+import '../features/more/presentation/pages/more_page.dart';
+import '../features/stats/presentation/pages/stats_page.dart';
+import 'app_shell.dart';
 import 'pages.dart';
 
 import '../features/not_found_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/splash/presentation/splash_page.dart';
-import '../features/dashboard/presentation/home_page.dart';
+import '../features/dashboard/presentation/pages/home_page.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: Pages.splash.toPath(),
@@ -13,17 +17,37 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: Pages.splash.toPath(),
       name: Pages.splash.toPathName(),
-      builder: (context, state) => SplashPage(),
+      builder: (context, state) => const SplashPage(),
     ),
     GoRoute(
       path: Pages.login.toPath(),
       name: Pages.login.toPathName(),
       builder: (context, state) => const LoginPage(),
     ),
-    GoRoute(
-      path: Pages.home.toPath(),
-      name: Pages.home.toPathName(),
-      builder: (context, state) => HomePage(),
+    ShellRoute(
+      builder: (context, state, child) => AppShell(child: child),
+      routes: [
+        GoRoute(
+          path: Pages.home.toPath(),
+          name: Pages.home.toPathName(),
+          builder: (context, state) => const HomePage(),
+        ),
+        GoRoute(
+          path: Pages.history.toPath(),
+          name: Pages.history.toPathName(),
+          builder: (context, state) => const HistoryPage(),
+        ),
+        GoRoute(
+          path: Pages.stats.toPath(),
+          name: Pages.stats.toPathName(),
+          builder: (context, state) => const StatsPage(),
+        ),
+        GoRoute(
+          path: Pages.more.toPath(),
+          name: Pages.more.toPathName(),
+          builder: (context, state) => const MorePage(),
+        ),
+      ],
     ),
   ],
 

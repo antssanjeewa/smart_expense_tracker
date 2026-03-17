@@ -10,8 +10,13 @@ class AppTextTheme {
         color: AppColors.onSurface,
       ),
 
-      titleMedium: TextStyle(
+      titleLarge: TextStyle(
         fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      titleMedium: TextStyle(
+        fontSize: 20,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),

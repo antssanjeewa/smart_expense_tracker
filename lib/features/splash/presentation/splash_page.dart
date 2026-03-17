@@ -62,7 +62,7 @@ class _SplashPageState extends State<SplashPage> {
                 const SizedBox(height: 32),
                 Text(
                       'Smart Expense Tracker',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleLarge,
                     )
                     .animate(delay: const Duration(seconds: 1))
                     .fadeIn()
@@ -106,7 +106,7 @@ class _SplashPageState extends State<SplashPage> {
                   borderRadius: BorderRadius.circular(10),
                   child: LinearProgressIndicator(
                     backgroundColor: AppColors.onSecondary.withAlpha(50),
-                    valueColor: AlwaysStoppedAnimation<Color>(
+                    valueColor: const AlwaysStoppedAnimation<Color>(
                       AppColors.primary,
                     ),
                   ),
@@ -119,7 +119,7 @@ class _SplashPageState extends State<SplashPage> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(bottom: 24.0),
+              padding: const EdgeInsets.only(bottom: 24.0),
               child: Text(
                 'v 2.4.0 • Secure & Encrypted',
                 style: Theme.of(context).textTheme.labelSmall,
