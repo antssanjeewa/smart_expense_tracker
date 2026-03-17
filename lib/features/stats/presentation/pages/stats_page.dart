@@ -58,160 +58,353 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildBestSavingsCard() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF1754cf).withOpacity(0.2),
-            const Color(0xFF1754cf).withOpacity(0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return InkWell(
+      onTap: () =>
+          _showSavingsHistory(context), // මේ Function එක පහතින් තියෙනවා
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          gradient: LinearGradient(
+            colors: [
+              const Color(0xFF1754cf).withOpacity(0.2),
+              const Color(0xFF1754cf).withOpacity(0.05),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          border: Border.all(color: const Color(0xFF1754cf).withOpacity(0.2)),
         ),
-        border: Border.all(color: const Color(0xFF1754cf).withOpacity(0.2)),
-      ),
-      child: ClipRRect(
-        // පිරිසිදු නිමාවට
-        borderRadius: BorderRadius.circular(24),
-        child: Stack(
-          children: [
-            // Background එකේ තියෙන ලස්සන අලංකාර රවුම (UX - Visual Depth)
-            Positioned(
-              right: -20,
-              top: -20,
-              child: Icon(
-                Icons.stars,
-                size: 100,
-                color: Colors.white.withOpacity(0.03),
+        child: ClipRRect(
+          // පිරිසිදු නිමාවට
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              // Background එකේ තියෙන ලස්සන අලංකාර රවුම (UX - Visual Depth)
+              Positioned(
+                right: -20,
+                top: -20,
+                child: Icon(
+                  Icons.stars,
+                  size: 100,
+                  color: Colors.white.withOpacity(0.03),
+                ),
               ),
-            ),
 
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  // වම් පැත්ත: දත්ත (UI - Data Focus)
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF3684f2).withOpacity(0.1),
-                                shape: BoxShape.circle,
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    // වම් පැත්ත: දත්ත (UI - Data Focus)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: const Color(
+                                    0xFF3684f2,
+                                  ).withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.auto_graph,
+                                  size: 16,
+                                  color: Color(0xFF3684f2),
+                                ),
                               ),
-                              child: const Icon(
-                                Icons.auto_graph,
-                                size: 16,
-                                color: Color(0xFF3684f2),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              "TOTAL SAVINGS",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.2,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          "\$2,450.80",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 34,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -1,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        // Insight Text (UX - Encouragement)
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.arrow_upward,
-                              color: Colors.greenAccent,
-                              size: 14,
-                            ),
-                            const SizedBox(width: 4),
-                            RichText(
-                              text: const TextSpan(
+                              const SizedBox(width: 8),
+                              const Text(
+                                "TOTAL SAVINGS",
                                 style: TextStyle(
                                   color: Colors.grey,
-                                  fontSize: 12,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
                                 ),
-                                children: [
-                                  TextSpan(
-                                    text: "15% more",
-                                    style: TextStyle(
-                                      color: Colors.greenAccent,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  TextSpan(text: " than last month"),
-                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // දකුණු පැත්ත: Progress (UX - Goal Tracking)
-                  Column(
-                    children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SizedBox(
-                            height: 60,
-                            width: 60,
-                            child: CircularProgressIndicator(
-                              value: 0.72, // උදා: බජට් එකෙන් 72% ක් සේව් කරලා
-                              strokeWidth: 6,
-                              backgroundColor: Colors.white.withOpacity(0.05),
-                              valueColor: const AlwaysStoppedAnimation<Color>(
-                                Color(0xFF3684f2),
-                              ),
-                              strokeCap: StrokeCap.round,
-                            ),
+                            ],
                           ),
+                          const SizedBox(height: 12),
                           const Text(
-                            "72%",
+                            "\$2,450.80",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 12,
+                              fontSize: 34,
                               fontWeight: FontWeight.bold,
+                              letterSpacing: -1,
                             ),
+                          ),
+                          const SizedBox(height: 8),
+                          // Insight Text (UX - Encouragement)
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.arrow_upward,
+                                color: Colors.greenAccent,
+                                size: 14,
+                              ),
+                              const SizedBox(width: 4),
+                              RichText(
+                                text: const TextSpan(
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: "15% more",
+                                      style: TextStyle(
+                                        color: Colors.greenAccent,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextSpan(text: " than last month"),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        "GOAL",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                    ),
+
+                    // දකුණු පැත්ත: Progress (UX - Goal Tracking)
+                    Column(
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            SizedBox(
+                              height: 60,
+                              width: 60,
+                              child: CircularProgressIndicator(
+                                value: 0.72, // උදා: බජට් එකෙන් 72% ක් සේව් කරලා
+                                strokeWidth: 6,
+                                backgroundColor: Colors.white.withOpacity(0.05),
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Color(0xFF3684f2),
+                                ),
+                                strokeCap: StrokeCap.round,
+                              ),
+                            ),
+                            const Text(
+                              "72%",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(height: 8),
+                        const Text(
+                          "GOAL",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  void _showSavingsHistory(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent, // අපිට Custom පෙනුමක් ගන්න ඕන නිසා
+      isScrollControlled: true,
+      builder: (context) {
+        return Container(
+          height:
+              MediaQuery.of(context).size.height * 0.7, // Screen එකෙන් 70% ක්
+          decoration: const BoxDecoration(
+            color: Color(0xFF1e293b),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: Column(
+            children: [
+              // යටට අදින Handle එක (Visual cue for UX)
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Savings History",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Track your progress over the last 6 months",
+                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Mini Performance Chart (Simple Column bars)
+                    _buildMiniGrowthChart(),
+
+                    const SizedBox(height: 32),
+                    const Text(
+                      "Breakdown",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // History Items
+                    _historyItem(
+                      "March 2026",
+                      "+\$450.00",
+                      "High Efficiency",
+                      Colors.greenAccent,
+                    ),
+                    _historyItem(
+                      "February 2026",
+                      "+\$210.50",
+                      "Average",
+                      Colors.blueAccent,
+                    ),
+                    _historyItem(
+                      "January 2026",
+                      "+\$580.00",
+                      "Excellent",
+                      Colors.amberAccent,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMiniGrowthChart() {
+    // සේවිංග්ස් දත්ත (0.0 සිට 1.0 දක්වා අගයන්)
+    final List<double> growthData = [0.4, 0.7, 0.5, 0.9, 0.6, 0.85];
+    final List<String> months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      height: 120,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: List.generate(growthData.length, (index) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // Bar එක
+              AnimatedContainer(
+                duration: Duration(
+                  milliseconds: 500 + (index * 100),
+                ), // එකින් එක පිපී එන පෙනුමට
+                height: 70 * growthData[index],
+                width: 35,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF3684f2),
+                      const Color(0xFF3684f2).withOpacity(0.3),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: index == growthData.length - 1
+                    ? const Icon(
+                        Icons.bolt,
+                        color: Colors.white,
+                        size: 14,
+                      ) // අන්තිම එකට special icon එකක්
+                    : null,
+              ),
+              const SizedBox(height: 8),
+              // මාසය
+              Text(
+                months[index],
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _historyItem(String month, String amount, String tag, Color tagColor) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(month, style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text(
+                tag,
+                style: TextStyle(
+                  color: tagColor,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+          Text(
+            amount,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
     );
   }
