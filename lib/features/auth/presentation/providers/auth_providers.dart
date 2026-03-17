@@ -8,6 +8,7 @@ final authControllerProvider = AsyncNotifierProvider<AuthController, String?>(
 );
 
 final passwordVisibilityProvider = NotifierProvider<PasswordVisibility, bool>(
+  isAutoDispose: true,
   () {
     return PasswordVisibility();
   },

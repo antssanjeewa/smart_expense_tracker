@@ -13,13 +13,15 @@ class AppShell extends StatelessWidget {
     return Scaffold(
       extendBody: false,
       body: child,
+      resizeToAvoidBottomInset: false,
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Pages.more.go(context),
+        onPressed: () => Pages.addTransaction.go(context),
         backgroundColor: AppColors.primary,
         shape: const CircleBorder(),
         child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: AppColors.surface,
         elevation: 0,

@@ -31,7 +31,7 @@ class HistoryPage extends StatelessWidget {
                         children: [
                           Text(
                             "Transactions",
-                            style: Theme.of(context).textTheme.titleMedium,
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                           IconButton(
                             onPressed: () {},

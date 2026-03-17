@@ -4,6 +4,11 @@ import '../../core/constants/constants.dart';
 class AppTextTheme {
   static TextTheme getDarkTextTheme() {
     return const TextTheme(
+      headlineLarge: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
       headlineSmall: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
@@ -11,12 +16,12 @@ class AppTextTheme {
       ),
 
       titleLarge: TextStyle(
-        fontSize: 32,
+        fontSize: 20,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
       titleMedium: TextStyle(
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),

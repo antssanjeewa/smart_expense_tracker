@@ -28,8 +28,7 @@ ThemeData darkTheme() {
     textTheme: AppTextTheme.getDarkTextTheme(),
 
     appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.surface,
-      elevation: 0,
+      backgroundColor: AppColors.background,
       iconTheme: IconThemeData(color: Colors.white),
     ),
 

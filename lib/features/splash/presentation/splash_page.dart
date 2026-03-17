@@ -62,7 +62,7 @@ class _SplashPageState extends State<SplashPage> {
                 const SizedBox(height: 32),
                 Text(
                       'Smart Expense Tracker',
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: Theme.of(context).textTheme.headlineLarge,
                     )
                     .animate(delay: const Duration(seconds: 1))
                     .fadeIn()

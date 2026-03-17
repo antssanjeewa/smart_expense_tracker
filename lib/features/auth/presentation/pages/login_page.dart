@@ -60,7 +60,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         const SizedBox(height: AppSpacing.s),
                         Text(
                           'Welcome Back',
-                          style: Theme.of(context).textTheme.titleLarge,
+                          style: Theme.of(context).textTheme.headlineLarge,
                         ),
 
                         const SizedBox(height: AppSpacing.s),

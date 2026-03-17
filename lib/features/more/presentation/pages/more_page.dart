@@ -1,17 +1,271 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MorePage extends StatelessWidget {
+import '../../../../core/constants/constants.dart';
+
+class MorePage extends ConsumerWidget {
   const MorePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: Center(
-        child: Text(
-          "More Page",
-          style: Theme.of(context).textTheme.headlineMedium,
+      appBar: _buildAppBar(context),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildProfileHeader(),
+            const SizedBox(height: AppSpacing.l),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
+              child: Column(
+                children: [
+                  _buildSection("Account", [
+                    _SettingsTile(
+                      icon: Icons.person_outline,
+                      title: "Profile Information",
+                      subtitle: "Name, email, phone number",
+                      onTap: () {},
+                    ),
+                    _SettingsTile(
+                      icon: Icons.account_balance_wallet_outlined,
+                      title: "Linked Accounts",
+                      subtitle: "Manage banks and cards",
+                      onTap: () {},
+                    ),
+                  ]),
+
+                  const SizedBox(height: AppSpacing.l),
+
+                  _buildSection("Preferences", [
+                    _SettingsTile(
+                      icon: Icons.dark_mode_outlined,
+                      title: "Dark Mode",
+                      subtitle: "Currently active",
+                      trailing: Switch(
+                        value: true,
+                        onChanged: (val) {},
+                        activeColor: AppColors.primary,
+                      ),
+                    ),
+                    _SettingsTile(
+                      icon: Icons.notifications_none,
+                      title: "Notifications",
+                      subtitle: "Alerts and reminders",
+                      onTap: () {},
+                    ),
+                    _SettingsTile(
+                      icon: Icons.payments_outlined,
+                      title: "Currency",
+                      subtitle: "USD (\$)",
+                      onTap: () {},
+                    ),
+                  ]),
+
+                  const SizedBox(height: AppSpacing.l),
+
+                  _buildSection("Security", [
+                    _SettingsTile(
+                      icon: Icons.fingerprint,
+                      title: "Biometric Unlock",
+                      subtitle: "Face ID or Touch ID",
+                      trailing: Switch(
+                        value: false,
+                        onChanged: (val) {},
+                        activeColor: AppColors.primary,
+                      ),
+                    ),
+                    _SettingsTile(
+                      icon: Icons.lock_reset,
+                      title: "Change Password",
+                      subtitle: "Last changed 3 months ago",
+                      onTap: () {},
+                    ),
+                  ]),
+
+                  const SizedBox(height: AppSpacing.l),
+
+                  _buildSection("Support", [
+                    _SettingsTile(
+                      icon: Icons.help_outline,
+                      title: "Help Center",
+                      subtitle: "FAQs and contact support",
+                      onTap: () {},
+                    ),
+                    _SettingsTile(
+                      icon: Icons.policy_outlined,
+                      title: "Privacy Policy",
+                      subtitle: "How we manage your data",
+                      onTap: () {},
+                    ),
+                    _SettingsTile(
+                      icon: Icons.logout,
+                      title: "Logout",
+                      isDestructive: true,
+                      onTap: () {},
+                    ),
+                  ]),
+
+                  const SizedBox(height: AppSpacing.xl),
+                  const Text(
+                    "Smart Expense Tracker v2.4.0",
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                  const SizedBox(height: 100), // Bottom nav එකට ඉඩ තැබීමට
+                ],
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text("Settings"),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.notifications_outlined),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfileHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.primary, width: 2),
+                ),
+                child: const CircleAvatar(
+                  radius: 45,
+                  backgroundImage: NetworkImage(
+                    "https://i.pravatar.cc/150?u=alex",
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: AppColors.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.m),
+          const Text(
+            "Alex Thompson",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const Text(
+            "alex.t@finmail.com",
+            style: TextStyle(color: Colors.grey, fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSection(String title, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 8, bottom: 8),
+          child: Text(
+            title.toUpperCase(),
+            style: const TextStyle(
+              color: Colors.grey,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF1e293b).withOpacity(0.5), // slate-card/50
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(children: children),
+        ),
+      ],
+    );
+  }
+}
+
+class _SettingsTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  final bool isDestructive;
+
+  const _SettingsTile({
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+    this.isDestructive = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: isDestructive
+              ? Colors.red.withOpacity(0.1)
+              : AppColors.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          icon,
+          color: isDestructive ? Colors.red : AppColors.primary,
+          size: 20,
+        ),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: isDestructive ? Colors.red : Colors.white,
+        ),
+      ),
+      subtitle: subtitle != null
+          ? Text(
+              subtitle!,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            )
+          : null,
+      trailing:
+          trailing ??
+          const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
     );
   }
 }

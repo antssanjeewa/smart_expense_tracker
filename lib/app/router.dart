@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../features/history/presentation/pages/history_page.dart';
-import '../features/more/presentation/pages/more_page.dart';
-import '../features/stats/presentation/pages/stats_page.dart';
 import 'app_shell.dart';
 import 'pages.dart';
 
 import '../features/not_found_page.dart';
+import '../features/history/presentation/pages/add_transaction.dart';
+import '../features/history/presentation/pages/history_page.dart';
+import '../features/more/presentation/pages/more_page.dart';
+import '../features/stats/presentation/pages/stats_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/splash/presentation/splash_page.dart';
 import '../features/dashboard/presentation/pages/home_page.dart';
@@ -36,6 +37,13 @@ final GoRouter router = GoRouter(
           path: Pages.history.toPath(),
           name: Pages.history.toPathName(),
           builder: (context, state) => const HistoryPage(),
+          routes: [
+            GoRoute(
+              path: Pages.addTransaction.toPath(isSubRoute: true),
+              name: Pages.addTransaction.toPathName(),
+              builder: (context, state) => const AddTransaction(),
+            ),
+          ],
         ),
         GoRoute(
           path: Pages.stats.toPath(),

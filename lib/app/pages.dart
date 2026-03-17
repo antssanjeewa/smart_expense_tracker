@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-enum Pages { splash, login, home, history, stats, more }
+enum Pages { splash, login, home, history, addTransaction, stats, more }
 
 extension PageExtention on Pages {
   String toPath({
