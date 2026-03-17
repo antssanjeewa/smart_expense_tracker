@@ -17,7 +17,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: Pages.splash.toPath(),
       name: Pages.splash.toPathName(),
-      builder: (context, state) => SplashPage(),
+      builder: (context, state) => const SplashPage(),
     ),
     GoRoute(
       path: Pages.login.toPath(),
@@ -30,7 +30,7 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: Pages.home.toPath(),
           name: Pages.home.toPathName(),
-          builder: (context, state) => HomePage(),
+          builder: (context, state) => const HomePage(),
         ),
         GoRoute(
           path: Pages.history.toPath(),

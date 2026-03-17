@@ -1,51 +1,51 @@
-import 'package:flutter_riverpod/legacy.dart';
-
-import '../../../../core/errors/exceptions.dart';
-import 'auth_state.dart';
+import 'dart:async';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'biometric_auth.dart';
 
-class AuthController extends StateNotifier<AuthState> {
-  AuthController() : super(const AuthInitial());
+class AuthController extends AsyncNotifier<String?> {
+  @override
+  FutureOr<String?> build() => null;
 
   final BiometricAuth _biometricAuth = BiometricAuth();
 
   Future<void> login(String email, String password) async {
-    state = const AuthLoading();
+    state = const AsyncLoading();
 
-    try {
+    state = await AsyncValue.guard(() async {
       final userId = await Future.delayed(const Duration(seconds: 2));
-      // final userId = await repository.login(email, password);
 
-      if (userId != null) {
-        state = AuthSuccess(userId);
-      } else {
-        state = const AuthError("Invalid credentials");
+      if (userId == null) {
+        throw Exception("Invalid credentials");
       }
-    } catch (e) {
-      var message = AppException.fromError(e).toString();
-      state = AuthError(message);
-    }
+
+      return userId;
+    });
   }
 
   Future<void> loginWithBiometrics() async {
-    state = const AuthLoading();
+    state = const AsyncLoading();
 
-    try {
+    state = await AsyncValue.guard(() async {
       final canAuth = await _biometricAuth.canCheckBiometrics();
+
       if (!canAuth) {
-        state = const AuthError('Biometric authentication not available');
-        return;
+        throw Exception('Biometric authentication not available');
       }
 
       final success = await _biometricAuth.authenticate();
+
       if (success) {
-        state = const AuthSuccess("biometric_user_id");
+        return "biometric_user_id";
       } else {
-        state = const AuthError('Biometric authentication failed');
+        throw Exception('Biometric authentication failed');
       }
-    } catch (e) {
-      var message = AppException.fromError(e).toString();
-      state = AuthError(message);
-    }
+    });
   }
+}
+
+class PasswordVisibility extends Notifier<bool> {
+  @override
+  bool build() => true;
+
+  void toggle() => state = !state;
 }

@@ -5,17 +5,17 @@ abstract class Failure {
 }
 
 class NetworkFailure extends Failure {
-  NetworkFailure(String message) : super(message);
+  NetworkFailure(super.message);
 }
 
 class AuthenticationFailure extends Failure {
-  AuthenticationFailure(String message) : super(message);
+  AuthenticationFailure(super.message);
 }
 
 class ValidationFailure extends Failure {
-  ValidationFailure(String message) : super(message);
+  ValidationFailure(super.message);
 }
 
 class ServerFailure extends Failure {
-  ServerFailure(String message) : super(message);
+  ServerFailure(super.message);
 }

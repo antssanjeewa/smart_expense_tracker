@@ -10,8 +10,8 @@ final themeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 ThemeData lightTheme() {
   return ThemeData(
     useMaterial3: true,
-    primaryColor: Color(0xFF2BB673),
-    scaffoldBackgroundColor: Color(0xFFF7F9FC),
+    primaryColor: const Color(0xFF2BB673),
+    scaffoldBackgroundColor: const Color(0xFFF7F9FC),
   );
 }
 

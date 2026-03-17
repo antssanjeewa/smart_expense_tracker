@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Dashboard"),
+            const Text("Dashboard"),
             Text(
               "Welcome back, Ants",
               style: Theme.of(context).textTheme.labelMedium,
@@ -23,10 +23,10 @@ class HomePage extends StatelessWidget {
           child: Image.asset(AppAssets.appIcon, fit: BoxFit.contain),
         ),
         actions: [
-          IconButton(icon: Icon(Icons.notifications), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
         ],
       ),
-      body: Center(child: Text("Welcome to the Home Page!")),
+      body: const Center(child: Text("Welcome to the Home Page!")),
     );
   }
 }
