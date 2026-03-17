@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../domain/provider.dart';
 import 'biometric_auth.dart';
 
 class AuthController extends AsyncNotifier<String?> {
@@ -10,9 +11,10 @@ class AuthController extends AsyncNotifier<String?> {
 
   Future<void> login(String email, String password) async {
     state = const AsyncLoading();
+    final loginUseCase = ref.read(loginUseCaseProvider);
 
     state = await AsyncValue.guard(() async {
-      final userId = await Future.delayed(const Duration(seconds: 2));
+      final userId = await loginUseCase(email, password);
 
       if (userId == null) {
         throw Exception("Invalid credentials");

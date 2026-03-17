@@ -1,40 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/pages.dart';
 import '../../../core/constants/constants.dart';
+import '../../auth/domain/provider.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashPage extends ConsumerWidget {
   const SplashPage({super.key});
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<AsyncValue<String?>>(authStateProvider, (previous, next) {
+      next.whenData((userId) {
+        Future.delayed(const Duration(seconds: 3), () {
+          if (!context.mounted) return;
 
-class _SplashPageState extends State<SplashPage> {
-  @override
-  void initState() {
-    super.initState();
-    _initializeApp();
-  }
+          if (userId != null) {
+            Pages.home.go(context);
+          } else {
+            Pages.login.go(context);
+          }
+        });
+      });
+    });
 
-  Future<void> _initializeApp() async {
-    await Future.delayed(const Duration(seconds: 3));
-
-    // TODO: check auth session
-    // final isLoggedIn = false;
-
-    if (mounted) {
-      Pages.login.go(context);
-      // if (isLoggedIn) {
-      //   context.go('/home');
-      // } else {
-      //   context.go('/login');
-      // }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
