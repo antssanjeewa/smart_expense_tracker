@@ -1,21 +1,28 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {
+  return SecureStorageService(const FlutterSecureStorage());
+});
 
 class SecureStorageService {
-  static const FlutterSecureStorage _storage = FlutterSecureStorage();
+  final FlutterSecureStorage _storage;
 
-  static Future<void> write(String key, String value) async {
+  SecureStorageService(this._storage);
+
+  Future<void> write(String key, String value) async {
     await _storage.write(key: key, value: value);
   }
 
-  static Future<String?> read(String key) async {
+  Future<String?> read(String key) async {
     return await _storage.read(key: key);
   }
 
-  static Future<void> delete(String key) async {
+  Future<void> delete(String key) async {
     await _storage.delete(key: key);
   }
 
-  static Future<void> deleteAll() async {
+  Future<void> deleteAll() async {
     await _storage.deleteAll();
   }
 }
