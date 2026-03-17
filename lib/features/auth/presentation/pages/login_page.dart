@@ -44,109 +44,118 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.l),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              const SizedBox(height: AppSpacing.xxl),
-              Column(
-                children: [
-                  Image.asset(AppAssets.appIcon, width: 120),
-
-                  const SizedBox(height: AppSpacing.s),
-                  Text(
-                    'Welcome Back',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-
-                  const SizedBox(height: AppSpacing.s),
-                  Text(
-                    'Please Enter Your Credentials To Continue',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.xxl),
-              Form(
-                key: _formKey,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    _buildLabel(context, "Email Address"),
-                    TextFormField(
-                      controller: _emailController,
-                      enabled: !isLoading,
-                      validator: AppValidation.validateEmail,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.email_outlined),
-                        hintText: 'test@example.com',
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.m),
+                    Column(
+                      children: [
+                        Image.asset(AppAssets.appIcon, width: 120),
 
-                    _buildLabel(context, "Password"),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: isObscure,
-                      enabled: !isLoading,
-                      validator: AppValidation.validatePassword,
-                      decoration: InputDecoration(
-                        hintText: "••••••••",
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            isObscure
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                          ),
-                          onPressed: () => ref
-                              .read(passwordVisibilityProvider.notifier)
-                              .toggle(),
+                        const SizedBox(height: AppSpacing.s),
+                        Text(
+                          'Welcome Back',
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
+
+                        const SizedBox(height: AppSpacing.s),
+                        Text(
+                          'Please Enter Your Credentials To Continue',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.xxl),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildLabel(context, "Email Address"),
+                          TextFormField(
+                            controller: _emailController,
+                            enabled: !isLoading,
+                            keyboardType: TextInputType.emailAddress,
+                            autofillHints: const [AutofillHints.email],
+                            validator: AppValidation.validateEmail,
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.email_outlined),
+                              hintText: 'test@example.com',
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.m),
+
+                          _buildLabel(context, "Password"),
+                          TextFormField(
+                            controller: _passwordController,
+                            obscureText: isObscure,
+                            enabled: !isLoading,
+                            validator: AppValidation.validatePassword,
+                            decoration: InputDecoration(
+                              hintText: "••••••••",
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  isObscure
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                ),
+                                onPressed: () => ref
+                                    .read(passwordVisibilityProvider.notifier)
+                                    .toggle(),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.xl),
+
+                          LoginButton(
+                            isLoading: isLoading,
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                ref
+                                    .read(authControllerProvider.notifier)
+                                    .login(
+                                      _emailController.text.trim(),
+                                      _passwordController.text,
+                                    );
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xl),
+                    _buildBiometricSection(context, isLoading),
+                    const SizedBox(height: AppSpacing.xxxl),
 
-                    LoginButton(
-                      isLoading: isLoading,
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          ref
-                              .read(authControllerProvider.notifier)
-                              .login(
-                                _emailController.text.trim(),
-                                _passwordController.text,
-                              );
-                        }
-                      },
+                    Center(
+                      child: RichText(
+                        text: TextSpan(
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          children: const [
+                            TextSpan(text: "Don't have an account? "),
+                            TextSpan(
+                              text: "Sign Up",
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
+                    const SizedBox(height: AppSpacing.xxl),
                   ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.xl),
-              _buildBiometricSection(context, isLoading),
-              const SizedBox(height: AppSpacing.xxl),
-              Center(
-                child: RichText(
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    children: const [
-                      TextSpan(text: "Don't have an account? "),
-                      TextSpan(
-                        text: "Sign Up",
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.m),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

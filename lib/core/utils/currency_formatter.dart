@@ -4,7 +4,7 @@ class CurrencyFormatter {
   static String formatCurrency(double amount, {String currency = 'USD'}) {
     final NumberFormat formatter = NumberFormat.currency(
       locale: 'en_US',
-      symbol: '\$',
+      symbol: 'Rs ',
     );
     return formatter.format(amount);
   }
