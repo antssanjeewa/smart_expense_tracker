@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 class DateFormatter {
   static String formatDate(DateTime date) {
-    return DateFormat('yyyy-MM-dd').format(date);
+    return DateFormat('MMMM dd yyyy').format(date);
   }
 
   static String formatDateTime(DateTime dateTime) {

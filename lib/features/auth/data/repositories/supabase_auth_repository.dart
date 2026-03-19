@@ -54,6 +54,8 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   Future<void> signOut() async {
     await _client.auth.signOut();
+    await _storage.delete('refresh_token');
+    logger.i("User signed out successfully");
   }
 
   @override
