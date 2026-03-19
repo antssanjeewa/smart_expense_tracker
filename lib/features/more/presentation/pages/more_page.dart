@@ -3,20 +3,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
+import '../providers/settings_provider.dart';
+import 'currency_picker_sheet.dart';
+import 'privacy_policy_sheet.dart';
 
 class MorePage extends ConsumerWidget {
   const MorePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(appSettingsProvider);
+
     return Scaffold(
       appBar: _buildAppBar(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildProfileHeader(),
+            _buildProfileHeader(ref),
             const SizedBox(height: AppSpacing.l),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
               child: Column(
@@ -35,18 +39,17 @@ class MorePage extends ConsumerWidget {
                       onTap: () {},
                     ),
                   ]),
-
                   const SizedBox(height: AppSpacing.l),
-
                   _buildSection("Preferences", [
                     _SettingsTile(
                       icon: Icons.dark_mode_outlined,
                       title: "Dark Mode",
                       subtitle: "Currently active",
                       trailing: Switch(
-                        value: true,
-                        onChanged: (val) {},
-                        activeColor: AppColors.primary,
+                        value: settings.isDarkMode,
+                        onChanged: (val) => ref
+                            .read(appSettingsProvider.notifier)
+                            .toggleDarkMode(val),
                       ),
                     ),
                     _SettingsTile(
@@ -58,22 +61,28 @@ class MorePage extends ConsumerWidget {
                     _SettingsTile(
                       icon: Icons.payments_outlined,
                       title: "Currency",
-                      subtitle: "USD (\$)",
-                      onTap: () {},
+                      subtitle: settings.currency,
+                      onTap: () => {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => const CurrencyPickerSheet(),
+                        )
+                      },
                     ),
                   ]),
-
                   const SizedBox(height: AppSpacing.l),
-
                   _buildSection("Security", [
                     _SettingsTile(
                       icon: Icons.fingerprint,
                       title: "Biometric Unlock",
                       subtitle: "Face ID or Touch ID",
                       trailing: Switch(
-                        value: false,
-                        onChanged: (val) {},
-                        activeColor: AppColors.primary,
+                        value: settings.isBiometricEnabled,
+                        onChanged: (val) => ref
+                            .read(appSettingsProvider.notifier)
+                            .toggleBiometric(val),
                       ),
                     ),
                     _SettingsTile(
@@ -83,9 +92,7 @@ class MorePage extends ConsumerWidget {
                       onTap: () {},
                     ),
                   ]),
-
                   const SizedBox(height: AppSpacing.l),
-
                   _buildSection("Support", [
                     _SettingsTile(
                       icon: Icons.help_outline,
@@ -97,7 +104,17 @@ class MorePage extends ConsumerWidget {
                       icon: Icons.policy_outlined,
                       title: "Privacy Policy",
                       subtitle: "How we manage your data",
-                      onTap: () {},
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => const FractionallySizedBox(
+                            heightFactor: 0.8,
+                            child: PrivacyPolicySheet(),
+                          ),
+                        );
+                      },
                     ),
                     _SettingsTile(
                       icon: Icons.logout,
@@ -110,7 +127,6 @@ class MorePage extends ConsumerWidget {
                       },
                     ),
                   ]),
-
                   const SizedBox(height: AppSpacing.xl),
                   const Text(
                     "Smart Expense Tracker v2.4.0",
@@ -138,55 +154,61 @@ class MorePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.primary, width: 2),
-                ),
-                child: const CircleAvatar(
-                  radius: 45,
-                  backgroundImage: NetworkImage(
-                    "https://i.pravatar.cc/150?u=alex",
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
+  Widget _buildProfileHeader(WidgetRef ref) {
+    final authState = ref.watch(authControllerProvider);
+
+    return authState.maybeWhen(
+      data: (user) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.primary, width: 2),
                   ),
-                  child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                  child: const CircleAvatar(
+                    radius: 45,
+                    backgroundImage: NetworkImage(
+                      "https://i.pravatar.cc/150?u=alex",
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.m),
-          const Text(
-            "Alex Thompson",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child:
+                        const Icon(Icons.edit, size: 14, color: Colors.white),
+                  ),
+                ),
+              ],
             ),
-          ),
-          const Text(
-            "alex.t@finmail.com",
-            style: TextStyle(color: Colors.grey, fontSize: 14),
-          ),
-        ],
+            const SizedBox(height: AppSpacing.m),
+            Text(
+              user ?? "Sameera Sanjeewa",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const Text(
+              "alex.t@finmail.com",
+              style: TextStyle(color: Colors.grey, fontSize: 14),
+            ),
+          ],
+        ),
       ),
+      orElse: () => const SizedBox.shrink(),
     );
   }
 
@@ -268,8 +290,7 @@ class _SettingsTile extends StatelessWidget {
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             )
           : null,
-      trailing:
-          trailing ??
+      trailing: trailing ??
           const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
     );
   }
