@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/constants.dart';
-import '../../../../core/utils/date_formatter.dart';
+import '../../../../core/utils/snackbar_utils.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../providers/transaction_di.dart';
 import '../providers/transaction_form_providers.dart';
+import '../widgets/form_amount_section.dart';
+import '../widgets/form_category_list.dart';
+import '../widgets/form_date_picker.dart';
+import '../widgets/form_toggle_type.dart';
+import '../widgets/form_wallet_selector.dart';
 
 class AddTransaction extends ConsumerStatefulWidget {
   const AddTransaction({super.key});
@@ -29,34 +34,18 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedCategory = ref.watch(selectedCategoryProvider);
-    final selectedType = ref.watch(selectedTypeProvider);
     final controllerState = ref.watch(transactionControllerProvider);
-    final currentWallet = ref.watch(selectedWalletProvider);
-    final selectedDate = ref.watch(selectedDateProvider);
-    final currentAmount = ref.watch(amountProvider);
 
     ref.listen<AsyncValue<void>>(
       transactionControllerProvider,
       (previous, next) {
         next.whenOrNull(
           error: (error, stackTrace) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Error: ${error.toString()}"),
-                backgroundColor: Colors.redAccent,
-              ),
-            );
+            context.showError(error.toString());
           },
           data: (_) {
             if (previous?.isLoading == true) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Transaction added successfully!"),
-                  backgroundColor: Colors.green,
-                ),
-              );
-
+              context.showSuccess("Transaction added successfully!");
               Navigator.pop(context);
             }
           },
@@ -72,17 +61,17 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
           child: Column(
             children: [
               const SizedBox(height: AppSpacing.l),
-              _buildTypeToggle(selectedType),
+              const FormToggleType(),
               const SizedBox(height: AppSpacing.l),
-              _buildAmountSection(currentAmount),
+              const FormAmountSection(),
               const SizedBox(height: AppSpacing.l),
-              _buildCategoryList(selectedCategory),
+              const FormCategoryList(),
               const SizedBox(height: AppSpacing.l),
               _buildTitleField(),
               const SizedBox(height: AppSpacing.l),
-              _buildDatePicker(selectedDate),
+              const FormDatePicker(),
               const SizedBox(height: AppSpacing.l),
-              _buildWalletSelector(currentWallet),
+              const FormWalletSelector(),
               const SizedBox(height: AppSpacing.l),
               _buildNoteFields(),
               const SizedBox(height: AppSpacing.l),
@@ -91,185 +80,6 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTypeToggle(TransactionType currentType) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1e293b), // bg-slate-800
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          _buildToggleItem("Expense", TransactionType.expense, currentType),
-          _buildToggleItem("Income", TransactionType.income, currentType),
-          _buildToggleItem("Transfer", TransactionType.transfer, currentType),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToggleItem(
-      String title, TransactionType type, TransactionType currentType) {
-    final isSelected = type == currentType;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => ref.read(selectedTypeProvider.notifier).update(type),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFF334155) : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Center(
-            child: Text(
-              title,
-              style: TextStyle(
-                color: isSelected ? const Color(0xFF3684f2) : Colors.grey,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAmountSection(double currentAmount) {
-    return InkWell(
-      onTap: () => _showAmountDialog(currentAmount),
-      child: Column(
-        children: [
-          const Text(
-            "AMOUNT",
-            style: TextStyle(
-              color: Colors.grey,
-              letterSpacing: 1.2,
-              fontSize: 12,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              const Text(
-                "Rs",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                currentAmount.toStringAsFixed(2),
-                style:
-                    const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showAmountDialog(double currentAmount) {
-    final controller = TextEditingController(
-        text: currentAmount == 0 ? "" : currentAmount.toString());
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1e293b),
-        title: const Text("Enter Amount"),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          style: const TextStyle(fontSize: 24, color: Colors.white),
-          decoration: const InputDecoration(
-            hintText: "0.00",
-          ),
-        ),
-        actions: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () {
-                final val = double.tryParse(controller.text) ?? 0.0;
-                ref.read(amountProvider.notifier).update(val);
-                Navigator.pop(context);
-              },
-              child: const Text("Save"),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryList(dynamic selectedCategory) {
-    final categories = ref.watch(categoriesProvider);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 8),
-          child: Text("CATEGORY",
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold)),
-        ),
-        SizedBox(
-          height: 100,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              final cat = categories[index];
-              final isSelected = selectedCategory?.id == cat.id;
-
-              return GestureDetector(
-                onTap: () =>
-                    ref.read(selectedCategoryProvider.notifier).update(cat),
-                child: Container(
-                  width: 85,
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? const Color(0xFF3684f2).withOpacity(0.1)
-                        : const Color(0xFF1e293b).withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                        color: isSelected
-                            ? const Color(0xFF3684f2)
-                            : Colors.transparent,
-                        width: 1.5),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(cat.icon,
-                          color: isSelected
-                              ? const Color(0xFF3684f2)
-                              : Colors.grey),
-                      const SizedBox(height: 8),
-                      Text(cat.name,
-                          style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.grey,
-                              fontSize: 12)),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
     );
   }
 
@@ -285,89 +95,6 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDatePicker(DateTime currentDate) {
-    return InkWell(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1e293b).withAlpha(160),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.calendar_today_outlined,
-                color: Colors.grey, size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-                child: Text(
-              DateFormatter.formatDate(currentDate),
-            )),
-            const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
-          ],
-        ),
-      ),
-      onTap: () async {
-        final pickedDate = await showDatePicker(
-          context: context,
-          initialDate: currentDate,
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2100),
-        );
-        if (pickedDate != null) {
-          ref.read(selectedDateProvider.notifier).update(pickedDate);
-        }
-      },
-    );
-  }
-
-  Widget _buildWalletSelector(String currentWallet) {
-    final wallets = ref.watch(walletsProvider);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1e293b).withAlpha(160),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: currentWallet,
-          hint: const Row(
-            children: [
-              Icon(Icons.account_balance_wallet_outlined,
-                  color: Colors.grey, size: 20),
-              SizedBox(width: 12),
-              Text("Select Wallet", style: TextStyle(color: Colors.grey)),
-            ],
-          ),
-          isExpanded: true,
-          dropdownColor: const Color(0xFF1e293b),
-          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
-          items: wallets.map((String wallet) {
-            return DropdownMenuItem<String>(
-              value: wallet,
-              child: Row(
-                children: [
-                  const Icon(Icons.account_balance_wallet_outlined,
-                      color: Colors.grey, size: 20),
-                  const SizedBox(width: 12),
-                  Text(wallet,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w500, color: Colors.grey)),
-                ],
-              ),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            if (newValue != null) {
-              ref.read(selectedWalletProvider.notifier).update(newValue);
-            }
-          },
         ),
       ),
     );
@@ -422,10 +149,7 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
 
   Future<void> _saveData() async {
     final amount = ref.read(amountProvider);
-    final selectedType = ref.read(selectedTypeProvider);
     final selectedCategory = ref.read(selectedCategoryProvider);
-    final selectedWallet = ref.read(selectedWalletProvider);
-    final selectedDate = ref.read(selectedDateProvider);
 
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -439,16 +163,20 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
       return;
     }
 
-    await ref.read(transactionControllerProvider.notifier).addTransaction(
-          title: _titleController.text.isEmpty
-              ? "Untitled"
-              : _titleController.text,
-          amount: amount,
-          date: selectedDate,
-          type: selectedType,
-          categoryId: selectedCategory.id,
-          walletId: selectedWallet,
-          note: _noteController.text,
-        );
+    final newTransaction = TransactionEntity(
+      title: _titleController.text.trim().isEmpty
+          ? "Untitled"
+          : _titleController.text.trim(),
+      amount: amount,
+      date: ref.read(selectedDateProvider),
+      type: ref.read(selectedTypeProvider),
+      categoryId: selectedCategory.id,
+      walletId: ref.read(selectedWalletProvider),
+      note: _noteController.text,
+    );
+
+    await ref
+        .read(transactionControllerProvider.notifier)
+        .addTransaction(newTransaction);
   }
 }

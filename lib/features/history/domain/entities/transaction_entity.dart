@@ -1,4 +1,4 @@
-enum TransactionType { income, expense, transfer }
+import 'transaction_type.dart';
 
 class TransactionEntity {
   final int? id;

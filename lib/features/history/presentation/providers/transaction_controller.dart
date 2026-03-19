@@ -9,27 +9,8 @@ class TransactionController extends AsyncNotifier<void> {
   @override
   FutureOr<void> build() => null;
 
-  Future<void> addTransaction({
-    required String title,
-    required double amount,
-    required DateTime date,
-    required type,
-    required String categoryId,
-    required String walletId,
-    String? note,
-  }) async {
+  Future<void> addTransaction(TransactionEntity transaction) async {
     state = const AsyncValue.loading();
-
-    final transaction = TransactionEntity(
-      title: title,
-      amount: amount,
-      date: date,
-      type: type,
-      categoryId: categoryId,
-      walletId: walletId,
-      note: note,
-    );
-
     final repository = ref.read(transactionRepositoryProvider);
 
     state =

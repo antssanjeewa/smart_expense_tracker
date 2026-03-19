@@ -13,6 +13,10 @@ class DateFormatter {
     return DateFormat('MMMM yyyy').format(date);
   }
 
+  static String formatTime(DateTime date) {
+    return DateFormat('hh:mm a').format(date);
+  }
+
   static DateTime parseDate(String dateString) {
     return DateFormat('yyyy-MM-dd').parse(dateString);
   }

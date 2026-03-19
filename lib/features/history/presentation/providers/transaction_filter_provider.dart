@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/transaction_entity.dart';
+import '../../domain/entities/transaction_type.dart';
 import 'transaction_di.dart';
 
 enum TransactionSort { newest, oldest, amountHigh, amountLow }

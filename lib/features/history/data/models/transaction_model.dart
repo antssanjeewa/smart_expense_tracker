@@ -1,5 +1,6 @@
 import 'package:isar_community/isar.dart';
 import '../../domain/entities/transaction_entity.dart';
+import '../../domain/entities/transaction_type.dart';
 
 part 'transaction_model.g.dart';
 

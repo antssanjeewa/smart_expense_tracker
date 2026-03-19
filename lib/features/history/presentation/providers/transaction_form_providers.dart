@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/category_model.dart';
-import '../../domain/entities/transaction_entity.dart';
+import '../../domain/entities/transaction_type.dart';
 
 class AmountNotifier extends Notifier<double> {
   @override
@@ -17,13 +17,36 @@ final amountProvider =
 
 final categoriesProvider = Provider<List<CategoryModel>>((ref) {
   return [
-    CategoryModel(id: 'food', name: 'Food', icon: Icons.restaurant),
     CategoryModel(
-        id: 'transport', name: 'Transport', icon: Icons.directions_car),
-    CategoryModel(id: 'shopping', name: 'Shopping', icon: Icons.shopping_bag),
-    CategoryModel(id: 'health', name: 'Health', icon: Icons.medical_services),
-    CategoryModel(id: 'bills', name: 'Bills', icon: Icons.receipt_long),
-    CategoryModel(id: 'salary', name: 'Salary', icon: Icons.payments),
+        id: 'food',
+        name: 'Food',
+        icon: Icons.restaurant,
+        color: Colors.orangeAccent),
+    CategoryModel(
+        id: 'transport',
+        name: 'Transport',
+        icon: Icons.directions_car,
+        color: Colors.purpleAccent),
+    CategoryModel(
+        id: 'shopping',
+        name: 'Shopping',
+        icon: Icons.shopping_bag,
+        color: Colors.pinkAccent),
+    CategoryModel(
+        id: 'health',
+        name: 'Health',
+        icon: Icons.medical_services,
+        color: Colors.blueAccent),
+    CategoryModel(
+        id: 'bills',
+        name: 'Bills',
+        icon: Icons.receipt_long,
+        color: Colors.redAccent),
+    CategoryModel(
+        id: 'salary',
+        name: 'Salary',
+        icon: Icons.payments,
+        color: Colors.greenAccent),
   ];
 });
 

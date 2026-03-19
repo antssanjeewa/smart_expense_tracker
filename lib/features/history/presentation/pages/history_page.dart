@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../domain/entities/transaction_entity.dart';
+import '../../domain/entities/transaction_type.dart';
 import '../providers/transaction_filter_provider.dart';
 import '../providers/transaction_form_providers.dart';
-import 'transaction_tile.dart';
+import '../widgets/transaction_tile.dart';
 
 class HistoryPage extends ConsumerWidget {
   const HistoryPage({super.key});
@@ -194,7 +195,6 @@ class HistoryPage extends ConsumerWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // --- Date Header (TODAY, YESTERDAY, etc.) ---
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
@@ -206,19 +206,16 @@ class HistoryPage extends ConsumerWidget {
                                   fontSize: 12),
                             ),
                           ),
-
-                          // --- අදාළ දිනයට අදාළ Transactions ටික ---
                           ...txs.map((tx) => TransactionTile(
                                 title: tx.title,
-                                category: _getCategoryName(ref,
-                                    tx.categoryId), // Category ID එකෙන් Name එක ගන්නවා
-                                time:
-                                    "${tx.date.hour}:${tx.date.minute.toString().padLeft(2, '0')}",
+                                category: _getCategoryName(ref, tx.categoryId),
+                                time: DateFormatter.formatTime(tx.date),
                                 amount: tx.type == TransactionType.expense
                                     ? -tx.amount
                                     : tx.amount,
                                 icon: _getCategoryIcon(ref, tx.categoryId),
-                                iconBgColor: _getCategoryColor(tx.type),
+                                iconBgColor:
+                                    _getCategoryColor(ref, tx.categoryId),
                               )),
                         ],
                       );
@@ -267,9 +264,10 @@ class HistoryPage extends ConsumerWidget {
         .icon;
   }
 
-  Color _getCategoryColor(TransactionType type) {
-    return type == TransactionType.expense
-        ? Colors.red.withOpacity(0.1)
-        : Colors.green.withOpacity(0.1);
+  Color _getCategoryColor(WidgetRef ref, String id) {
+    final categories = ref.read(categoriesProvider);
+    return categories
+        .firstWhere((c) => c.id == id, orElse: () => categories.first)
+        .color;
   }
 }
