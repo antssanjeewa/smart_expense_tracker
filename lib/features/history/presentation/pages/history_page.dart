@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/constants.dart';
+import '../../../../core/utils/date_formatter.dart';
+import '../../domain/entities/transaction_entity.dart';
+import '../providers/transaction_filter_provider.dart';
+import '../providers/transaction_form_providers.dart';
 import 'transaction_tile.dart';
 
-class HistoryPage extends StatelessWidget {
+class HistoryPage extends ConsumerWidget {
   const HistoryPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<String> filters = ["All", "Expenses", "Income", "Refunds"];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final transactionsAsync = ref.watch(filteredTransactionsProvider);
+    // final transactionsAsync = ref.watch(transactionsStreamProvider);
+    final filter = ref.watch(transactionFilterProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -17,7 +24,7 @@ class HistoryPage extends StatelessWidget {
               floating: true,
               pinned: true,
               backgroundColor: AppColors.background,
-              expandedHeight: 180,
+              expandedHeight: 200,
               flexibleSpace: FlexibleSpaceBar(
                 background: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -35,7 +42,33 @@ class HistoryPage extends StatelessWidget {
                           ),
                           IconButton(
                             onPressed: () {},
-                            icon: const Icon(Icons.more_vert),
+                            icon: PopupMenuButton<TransactionSort>(
+                              icon: const Icon(Icons.sort_rounded,
+                                  color: Colors.grey),
+                              onSelected: (TransactionSort sort) {
+                                ref
+                                    .read(transactionFilterProvider.notifier)
+                                    .setSort(sort);
+                              },
+                              itemBuilder: (context) => [
+                                const PopupMenuItem(
+                                  value: TransactionSort.newest,
+                                  child: Text("Newest First"),
+                                ),
+                                const PopupMenuItem(
+                                  value: TransactionSort.oldest,
+                                  child: Text("Oldest First"),
+                                ),
+                                const PopupMenuItem(
+                                  value: TransactionSort.amountHigh,
+                                  child: Text("Amount: High to Low"),
+                                ),
+                                const PopupMenuItem(
+                                  value: TransactionSort.amountLow,
+                                  child: Text("Amount: Low to High"),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -47,92 +80,196 @@ class HistoryPage extends StatelessWidget {
                           fillColor: AppColors.surface,
                         ),
                       ),
-
                       const SizedBox(height: AppSpacing.s),
                       SizedBox(
                         height: 50,
-                        child: ListView.separated(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.s,
-                          ),
+                        child: ListView(
                           scrollDirection: Axis.horizontal,
-                          itemCount: filters.length,
-                          separatorBuilder: (_, __) => const SizedBox(width: 8),
-                          itemBuilder: (context, index) {
-                            final bool isSelected = index == 0;
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? AppColors.primary
-                                    : AppColors.surface,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    filters[index],
-                                    style: TextStyle(
-                                      color: isSelected
-                                          ? AppColors.onPrimary
-                                          : AppColors.onSurface,
-                                      fontWeight: isSelected
-                                          ? FontWeight.bold
-                                          : FontWeight.w500,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                  if (!isSelected) ...[
-                                    const SizedBox(width: 4),
-                                    const Icon(
-                                      Icons.keyboard_arrow_down,
-                                      size: 16,
-                                      color: AppColors.onSurface,
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            );
-                          },
+                          children: [
+                            _filterChip(ref, "All", null, filter.type == null),
+                            _filterChip(ref, "Income", TransactionType.income,
+                                filter.type == TransactionType.income),
+                            _filterChip(
+                                ref,
+                                "Expenses",
+                                TransactionType.expense,
+                                filter.type == TransactionType.expense),
+
+                            // Date Picker Button
+                            IconButton(
+                              icon: Icon(Icons.calendar_month,
+                                  color: filter.dateRange != null
+                                      ? Colors.blue
+                                      : Colors.grey),
+                              onPressed: () async {
+                                final range = await showDateRangePicker(
+                                    context: context,
+                                    firstDate: DateTime(2020),
+                                    lastDate: DateTime.now());
+                                ref
+                                    .read(transactionFilterProvider.notifier)
+                                    .setDateRange(range);
+                              },
+                            ),
+                          ],
                         ),
                       ),
+                      // SizedBox(
+                      //   height: 50,
+                      //   child: ListView.separated(
+                      //     padding: const EdgeInsets.symmetric(
+                      //       vertical: AppSpacing.s,
+                      //     ),
+                      //     scrollDirection: Axis.horizontal,
+                      //     itemCount: filters.length,
+                      //     separatorBuilder: (_, __) => const SizedBox(width: 8),
+                      //     itemBuilder: (context, index) {
+                      //       final bool isSelected = index == 0;
+                      //       return Container(
+                      //         padding: const EdgeInsets.symmetric(
+                      //           horizontal: 20,
+                      //           vertical: 8,
+                      //         ),
+                      //         decoration: BoxDecoration(
+                      //           color: isSelected
+                      //               ? AppColors.primary
+                      //               : AppColors.surface,
+                      //           borderRadius: BorderRadius.circular(20),
+                      //         ),
+                      //         child: Row(
+                      //           children: [
+                      //             Text(
+                      //               filters[index],
+                      //               style: TextStyle(
+                      //                 color: isSelected
+                      //                     ? AppColors.onPrimary
+                      //                     : AppColors.onSurface,
+                      //                 fontWeight: isSelected
+                      //                     ? FontWeight.bold
+                      //                     : FontWeight.w500,
+                      //                 fontSize: 13,
+                      //               ),
+                      //             ),
+                      //             if (!isSelected) ...[
+                      //               const SizedBox(width: 4),
+                      //               const Icon(
+                      //                 Icons.keyboard_arrow_down,
+                      //                 size: 16,
+                      //                 color: AppColors.onSurface,
+                      //               ),
+                      //             ],
+                      //           ],
+                      //         ),
+                      //       );
+                      //     },
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
               ),
             ),
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: AppSpacing.m),
-                child: Text("TODAY"),
+            transactionsAsync.when(
+              data: (transactions) {
+                final Map<String, List<TransactionEntity>> grouped = {};
+                for (var tx in transactions) {
+                  final dateKey = tx.date.relativeDate;
+                  grouped.putIfAbsent(dateKey, () => []).add(tx);
+                }
+
+                final keys = grouped.keys.toList();
+
+                if (transactions.isEmpty) {
+                  return const SliverFillRemaining(
+                    child: Center(child: Text("No transactions yet.")),
+                  );
+                }
+
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (index >= keys.length) return null;
+                      final dateKey = keys[index];
+                      final txs = grouped[dateKey]!;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // --- Date Header (TODAY, YESTERDAY, etc.) ---
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: Text(
+                              dateKey,
+                              style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12),
+                            ),
+                          ),
+
+                          // --- අදාළ දිනයට අදාළ Transactions ටික ---
+                          ...txs.map((tx) => TransactionTile(
+                                title: tx.title,
+                                category: _getCategoryName(ref,
+                                    tx.categoryId), // Category ID එකෙන් Name එක ගන්නවා
+                                time:
+                                    "${tx.date.hour}:${tx.date.minute.toString().padLeft(2, '0')}",
+                                amount: tx.type == TransactionType.expense
+                                    ? -tx.amount
+                                    : tx.amount,
+                                icon: _getCategoryIcon(ref, tx.categoryId),
+                                iconBgColor: _getCategoryColor(tx.type),
+                              )),
+                        ],
+                      );
+                    },
+                    childCount: transactions.length,
+                  ),
+                );
+              },
+              loading: () => const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
               ),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate([
-                const TransactionTile(
-                  title: "Apple Store",
-                  category: "Electronics",
-                  time: "2:45 PM",
-                  amount: -1299.00,
-                  icon: Icons.shopping_bag_outlined,
-                  iconBgColor: Colors.red,
-                ),
-                const TransactionTile(
-                  title: "Salary Deposit",
-                  category: "TechCorp Inc",
-                  time: "10:45 AM",
-                  amount: 199.00,
-                  icon: Icons.money,
-                  iconBgColor: Colors.blue,
-                ),
-              ]),
+              error: (err, stack) => SliverFillRemaining(
+                child: Center(child: Text("Error: $err")),
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _filterChip(
+      WidgetRef ref, String label, TransactionType? type, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: isSelected,
+        onSelected: (_) =>
+            ref.read(transactionFilterProvider.notifier).setType(type),
+      ),
+    );
+  }
+
+  String _getCategoryName(WidgetRef ref, String id) {
+    final categories = ref.read(categoriesProvider);
+    return categories
+        .firstWhere((c) => c.id == id, orElse: () => categories.first)
+        .name;
+  }
+
+  IconData _getCategoryIcon(WidgetRef ref, String id) {
+    final categories = ref.read(categoriesProvider);
+    return categories
+        .firstWhere((c) => c.id == id, orElse: () => categories.first)
+        .icon;
+  }
+
+  Color _getCategoryColor(TransactionType type) {
+    return type == TransactionType.expense
+        ? Colors.red.withOpacity(0.1)
+        : Colors.green.withOpacity(0.1);
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/storage/local/isar_service.dart';
 import '../../data/datasources/transaction_local_datasource.dart';
 import '../../data/repositories/transaction_repository_impl.dart';
+import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import 'transaction_controller.dart';
 
@@ -43,6 +44,13 @@ final transactionRepositoryProvider = Provider<TransactionRepository>((ref) {
     local: localDataSource,
   );
 });
+
+final transactionsStreamProvider =
+    StreamProvider<List<TransactionEntity>>((ref) {
+  final repository = ref.watch(transactionRepositoryProvider);
+  return repository.watchTransactions();
+});
+
 // final transactionRepositoryProvider = Provider<TransactionRepository>((ref) {
 //   return TransactionRepositoryImpl(
 //     remote: ref.watch(transactionRemoteDataSourceProvider),
