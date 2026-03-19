@@ -12,6 +12,33 @@ import '../widgets/form_date_picker.dart';
 import '../widgets/form_toggle_type.dart';
 import '../widgets/form_wallet_selector.dart';
 
+// ============================================================================
+// CONSTANTS
+// ============================================================================
+
+/// Default amount value for form initialization.
+const String _defaultAmountText = '0.00';
+
+/// Default title for transactions without a description.
+const String _defaultTransactionTitle = 'Untitled';
+
+/// Number of lines for the note/description text field.
+const int _noteFieldLines = 3;
+
+// ============================================================================
+// ADD TRANSACTION PAGE
+// ============================================================================
+
+/// Page for adding a new financial transaction.
+///
+/// Provides comprehensive form for creating transactions with:
+/// - Transaction type selection (Income/Expense)
+/// - Amount input with validation
+/// - Category selection from predefined list
+/// - Title/description for the transaction
+/// - Date/time picker
+/// - Wallet/account selection
+/// - Optional notes
 class AddTransaction extends ConsumerStatefulWidget {
   const AddTransaction({super.key});
 
@@ -20,9 +47,22 @@ class AddTransaction extends ConsumerStatefulWidget {
 }
 
 class _AddTransactionState extends ConsumerState<AddTransaction> {
-  final _amountController = TextEditingController(text: "0.00");
-  final _noteController = TextEditingController();
-  final _titleController = TextEditingController();
+  /// Text controller for transaction amount.
+  late final TextEditingController _amountController;
+
+  /// Text controller for transaction notes.
+  late final TextEditingController _noteController;
+
+  /// Text controller for transaction title/description.
+  late final TextEditingController _titleController;
+
+  @override
+  void initState() {
+    super.initState();
+    _amountController = TextEditingController(text: _defaultAmountText);
+    _noteController = TextEditingController();
+    _titleController = TextEditingController();
+  }
 
   @override
   void dispose() {
@@ -36,6 +76,7 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
   Widget build(BuildContext context) {
     final controllerState = ref.watch(transactionControllerProvider);
 
+    // Listen for transaction addition result
     ref.listen<AsyncValue<void>>(
       transactionControllerProvider,
       (previous, next) {
@@ -45,7 +86,7 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
           },
           data: (_) {
             if (previous?.isLoading == true) {
-              context.showSuccess("Transaction added successfully!");
+              context.showSuccess('Transaction added successfully!');
               Navigator.pop(context);
             }
           },
@@ -54,13 +95,16 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Transaction")),
+      appBar: AppBar(title: const Text('Add Transaction')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
           child: Column(
             children: [
               const SizedBox(height: AppSpacing.l),
+              // ================================================================
+              // FORM FIELDS
+              // ================================================================
               const FormToggleType(),
               const SizedBox(height: AppSpacing.l),
               const FormAmountSection(),
@@ -73,8 +117,11 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
               const SizedBox(height: AppSpacing.l),
               const FormWalletSelector(),
               const SizedBox(height: AppSpacing.l),
-              _buildNoteFields(),
+              _buildNoteField(),
               const SizedBox(height: AppSpacing.l),
+              // ================================================================
+              // SUBMIT BUTTON
+              // ================================================================
               _buildSaveButton(controllerState),
             ],
           ),
@@ -83,15 +130,20 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
     );
   }
 
+  // ==========================================================================
+  // HELPER METHODS - UI BUILDERS
+  // ==========================================================================
+
+  /// Builds the transaction title input field.
   Widget _buildTitleField() {
     return TextField(
       controller: _titleController,
       decoration: InputDecoration(
-        hintText: "Transaction Title",
+        hintText: 'Transaction Title',
         isDense: true,
         prefixIcon: const Icon(Icons.title, color: Colors.grey),
         filled: true,
-        fillColor: const Color(0xFF1e293b).withAlpha(120),
+        fillColor: AppColors.surface.withAlpha(120),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -100,15 +152,16 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
     );
   }
 
-  Widget _buildNoteFields() {
+  /// Builds the transaction notes input field.
+  Widget _buildNoteField() {
     return TextField(
-      maxLines: 3,
+      maxLines: _noteFieldLines,
       controller: _noteController,
       decoration: InputDecoration(
-        hintText: "Add notes...",
+        hintText: 'Add notes...',
         prefixIcon: const Icon(Icons.notes, color: Colors.grey),
         filled: true,
-        fillColor: const Color(0xFF1e293b).withAlpha(120),
+        fillColor: AppColors.surface.withAlpha(120),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -117,27 +170,30 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
     );
   }
 
+  /// Builds the save/submit button with loading state.
   Widget _buildSaveButton(AsyncValue state) {
     return ElevatedButton(
-      onPressed: state.isLoading ? null : _saveData,
+      onPressed: state.isLoading ? null : _handleSaveTransaction,
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF3684f2),
+        backgroundColor: AppColors.primary,
         minimumSize: const Size(double.infinity, 56),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
         elevation: 8,
-        shadowColor: const Color(0xFF3684f2).withAlpha(100),
+        shadowColor: AppColors.primary.withAlpha(100),
       ),
       child: state.isLoading
           ? const SizedBox(
               height: 20,
               width: 20,
               child: CircularProgressIndicator(
-                  strokeWidth: 2, color: Colors.white),
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
             )
           : const Text(
-              "Save Transaction",
+              'Save Transaction',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -147,34 +203,45 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
     );
   }
 
-  Future<void> _saveData() async {
+  // ==========================================================================
+  // HELPER METHODS - DATA HANDLING
+  // ==========================================================================
+
+  /// Validates and saves the transaction.
+  Future<void> _handleSaveTransaction() async {
     final amount = ref.read(amountProvider);
     final selectedCategory = ref.read(selectedCategoryProvider);
 
+    // Validate amount
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please enter a valid amount")));
+        const SnackBar(content: Text('Please enter a valid amount')),
+      );
       return;
     }
 
+    // Validate category selection
     if (selectedCategory == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please Select Category")));
+        const SnackBar(content: Text('Please select a category')),
+      );
       return;
     }
 
+    // Create transaction entity
     final newTransaction = TransactionEntity(
       title: _titleController.text.trim().isEmpty
-          ? "Untitled"
+          ? _defaultTransactionTitle
           : _titleController.text.trim(),
       amount: amount,
       date: ref.read(selectedDateProvider),
       type: ref.read(selectedTypeProvider),
       categoryId: selectedCategory.id,
       walletId: ref.read(selectedWalletProvider),
-      note: _noteController.text,
+      note: _noteController.text.trim(),
     );
 
+    // Submit transaction
     await ref
         .read(transactionControllerProvider.notifier)
         .addTransaction(newTransaction);
